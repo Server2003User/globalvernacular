@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Global Vernacular</title>
+	<meta charset="utf-8">
+  	<meta name="viewport" content="initial-scale=1, width=device-width">
+  	<link rel="stylesheet"  href="./index.css" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Skranji:wght@400;700&display=swap" />
+  	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400&display=swap" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press Start 2P:wght@400&display=swap" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+	<link rel="manifest" href="/assets/site.webmanifest">
+	<link rel="mask-icon" href="/assets/safari-pinned-tab.svg" color="#5bbad5">
+	<meta name="msapplication-TileColor" content="#da532c">
+	<meta name="theme-color" content="#1578af">
+<body>
+  	<div class="totalframe">
+      		<div class="useablebox">
+				<div class="column1game">
+					<b class="global-vernacular-game" onclick="goTo('/index.html')">Global Vernacular</b>
+					<div class="scorebox">
+        				<div class="scoreboxbox">
+							<div class="seperationbar">
+							</div>
+							<div class="check">✓</div>
+							<b class="falsescore" id="falsescore">0</b>
+							<div class="x">X</div>
+							<b class="correctscore" id="correctscore">0</b>
+						</div>
+					</div>
+				</div>
+      			<div class="guessbutton" onclick="guess()">
+        				<div class="guessbuttonbox">
+                            <div class="guess">Guess</div>
+                        </div>
+      			</div>
+      			<div class="languagesarea" id="languagesarea" style="z-index: 0;">
+				</div>
+				  <div class="guesstextarea">
+					<div class="guesstextareatext" id="guesstextareatext" contenteditable=true></div>
+					<div class="guesstextareabox"></div>
+    		</div>
+  	</div>
+		</div>	
+		<div class="mtlolbutton">
+			<div class="mtlolrectangle" onclick="manyThings()">
+				<div class="mtloltext">mt.lol</div>
+			</div>	
+  	<script defer src="game.js"></script> 
+	  <script defer src="script.js"></script> 
+</body>
+<script>
+function scheduleRemoveNationFalse(element) {
+    if (element) {
+        setTimeout(() => {
+            element.remove();
+        }, 3000); // Wait for 3 seconds before removing
+    }
+}
+
+const observer = new MutationObserver((mutationsList) => {
+    for (let mutation of mutationsList) {
+        if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach((node) => {
+                if (node.id === 'nationfalse') {
+                    scheduleRemoveNationFalse(node);
+                }
+            });
+        }
+    }
+});
+
+observer.observe(document.body, { childList: true, subtree: true });
+</script>
+</html>

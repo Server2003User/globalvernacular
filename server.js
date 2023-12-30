@@ -8,9 +8,13 @@ const app = express();
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 
-// Enable CORS for all routes
+// Enable CORS for specific origins (update with your actual origins)
+const allowedOrigins = ['https://example.com', 'https://api.example.com'];
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow requests from all origins
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') {
@@ -20,25 +24,28 @@ app.use((req, res, next) => {
     }
 });
 
-// Endpoint for /api/countryInfo
+// API endpoints
 app.get('/api/countryInfo', async (req, res) => {
     try {
         const countryInfo = await backend.getCountryInfo();
         res.json(countryInfo);
     } catch (error) {
-        res.status(500).send('Internal Server Error');
-    }
-});
-app.get('/api/indCountryInfo', async (req, res) => {
-    try {
-        const indCountryInfo = await backend.getIndCountryInfo();
-        res.json(indCountryInfo);
-    } catch (error) {
+        console.error(error);
         res.status(500).send('Internal Server Error');
     }
 });
 
-// Serve other files or return 404 if not found
+app.get('/api/indCountryInfo', async (req, res) => {
+    try {
+        const countryInfo = await backend.getIndCountryInfo();
+        res.json(countryInfo);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+// Other routes
 app.use((req, res) => {
     const filePath = path.join(__dirname, 'public', req.url === '/' ? 'index.html' : req.url);
     const extname = path.extname(filePath);
@@ -54,6 +61,7 @@ app.use((req, res) => {
             if (err.code === 'ENOENT') {
                 res.status(404).send('File not found');
             } else {
+                console.error(err);
                 res.status(500).send('Internal Server Error');
             }
         } else {
@@ -63,7 +71,15 @@ app.use((req, res) => {
     });
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+const server = app.listen(process.env.PORT || 80, () => {
+    console.log(`Server running on port ${server.address().port}`);
+});
+
+// Graceful shutdown when SIGTERM received
+process.on('SIGTERM', () => {
+    console.log('Received SIGTERM. Closing server gracefully...');
+    server.close(() => {
+        console.log('Server closed. Exiting process.');
+        process.exit(0);
+    });
 });

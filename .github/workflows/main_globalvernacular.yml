@@ -58,6 +58,7 @@ jobs:
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_7609169A45A744EDAADE54AF63B8DA26 }}
           package: .
 
-      - name: Run Node.js file
-        run: node server.js
+       - name: Run Node.js server in the background
+        run: node server &
+         
 
